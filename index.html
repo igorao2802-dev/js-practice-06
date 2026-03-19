@@ -1,134 +1,122 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Практическая работа №6 — Starter Kit</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Практическая работа №6 — Работа с DOM</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <!-- ===== ШАПКА ===== -->
+  <!-- ============================ -->
+  <!-- ШАПКА -->
+  <!-- ============================ -->
   <header>
-    <h1>Практическая работа №6: Работа с DOM</h1>
-    <p class="subtitle">Поиск элементов, изменение контента и стилей, создание узлов</p>
+    <h1>Практическая работа №6</h1>
+    <p class="subtitle">Работа с DOM: поиск элементов, изменение контента и стилей, создание узлов</p>
   </header>
 
   <main>
-
-    <!-- ===== СЕКЦИЯ 1: ФОРМА ДОБАВЛЕНИЯ КАРТОЧКИ ===== -->
-    <section class="card" id="form-section">
-      <h2>Задание 1 — Добавить карточку услуги</h2>
-
+    <!-- ============================ -->
+    <!-- СОЗДАНИЕ КАРТОЧКИ -->
+    <!-- ============================ -->
+    <section class="card">
+      <h2>Создать карточку</h2>
+      
       <div class="form-group">
-        <label for="service-name">Название услуги:</label>
-        <input
-          type="text"
-          id="service-name"
-          placeholder="Минимум 3 символа..."
-          maxlength="60"
-        />
+        <label for="title-input">Название услуги:</label>
+        <input type="text" id="title-input" placeholder="Введите название (мин. 3 символа)">
       </div>
-
+      
       <div class="form-group">
-        <label for="service-category">Категория:</label>
-        <select id="service-category">
-          <option value="design">Дизайн</option>
-          <option value="dev">Разработка</option>
-          <option value="marketing">Маркетинг</option>
+        <label for="desc-input">Описание:</label>
+        <textarea id="desc-input" placeholder="Краткое описание услуги"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="category-select">Категория:</label>
+        <select id="category-select">
+          <option value="Дизайн">Дизайн</option>
+          <option value="Разработка">Разработка</option>
+          <option value="Маркетинг">Маркетинг</option>
         </select>
       </div>
-
+      
       <div class="buttons">
-        <button id="add-btn">Добавить</button>
-        <button id="clear-form-btn" class="btn-secondary">Очистить форму</button>
+        <button id="add-btn" class="btn-primary">Добавить</button>
+        <button id="clear-btn" class="btn-secondary">Очистить форму</button>
       </div>
-
-      <!-- Сюда JS выводит сообщение об ошибке валидации -->
-      <p id="validation-msg" class="validation-msg" aria-live="polite"></p>
+      
+      <!-- Блок для вывода ошибок валидации -->
+      <div id="form-error" class="validation-msg"></div>
     </section>
 
-    <!-- ===== СЕКЦИЯ 2: УПРАВЛЕНИЕ ОТОБРАЖЕНИЕМ ===== -->
-    <section class="card" id="controls-section">
-      <h2>Задание 2 — Управление стилями</h2>
-
+    <!-- ============================ -->
+    <!-- УПРАВЛЕНИЕ ОТОБРАЖЕНИЕМ -->
+    <!-- ============================ -->
+    <section class="card">
+      <h2>Управление отображением</h2>
+      
       <div class="buttons">
-        <button id="toggle-theme-btn">🌙 Переключить тему</button>
-        <button id="highlight-dev-btn">⭐ Подсветить «Разработку»</button>
-        <button id="show-favorites-btn" class="btn-secondary">Показать избранные</button>
-        <button id="show-all-btn" class="btn-secondary">Показать все</button>
+        <button id="toggle-theme" class="btn-secondary">Переключить тему</button>
+        <button id="highlight-expensive" class="btn-secondary">Подсветить "Разработка"</button>
+        <button id="filter-fav" class="btn-secondary">Показать только избранные</button>
+      </div>
+      
+      <div class="counter-line">
+        Количество карточек: <span id="total-count">0</span>
       </div>
     </section>
 
-    <!-- ===== СЕКЦИЯ 3: КАТАЛОГ КАРТОЧЕК ===== -->
-    <section class="card" id="catalog-section">
+    <!-- ============================ -->
+    <!-- КАТАЛОГ УСЛУГ -->
+    <!-- ============================ -->
+    <section class="card">
       <h2>Каталог услуг</h2>
-
-      <p class="counter-line">
-        Карточек в каталоге: <span id="total-count">0</span>
-      </p>
-
-      <!-- Контейнер для карточек — JS создаёт их здесь -->
-      <div id="services-container" aria-live="polite">
-        <!-- Карточки появятся здесь -->
-      </div>
-
-      <!-- Сообщение «список пуст» — управляется через JS -->
-      <p id="empty-msg" class="empty-msg">Карточек пока нет. Добавьте первую!</p>
+      
+      <!-- Контейнер для карточек (создаются через JS) -->
+      <div id="services-container"></div>
+      
+      <!-- Сообщение, если список пуст -->
+      <p id="empty-msg" class="empty-msg">Список услуг пуст. Добавьте первую карточку!</p>
     </section>
 
-    <!-- ===== СЕКЦИЯ 4: PRO — ДЕМО-ПРАЙС ===== -->
-    <section class="card" id="pro-section">
-      <h2>🔴 PRO — Демо-прайс (DocumentFragment)</h2>
-      <p class="hint">
-        Нажмите кнопку — в каталог добавятся 10 демо-карточек за один раз.<br>
-        Используйте <code>DocumentFragment</code> для оптимальной вставки.
-      </p>
+    <!-- ============================ -->
+    <!-- DEMO И МАССОВЫЕ ОПЕРАЦИИ -->
+    <!-- ============================ -->
+    <section class="card">
+      <h2>Demo и массовые операции</h2>
+      
       <div class="buttons">
-        <button id="demo-fill-btn">Загрузить демо-прайс</button>
+        <button id="load-demo" class="btn-primary">Загрузить демо (50 карточек)</button>
+        <button id="load-100" class="btn-primary">Заполнить демо (100 карточек)</button>
+        <button id="clear-all" class="btn-danger">Удалить все карточки</button>
       </div>
     </section>
 
-    <!-- ===== СЕКЦИЯ 5: ПОДСКАЗКИ ===== -->
-    <section class="card hints-section" id="hints-section">
-      <h2>📘 Подсказки</h2>
+    <!-- ============================ -->
+    <!-- ПОДСКАЗКИ -->
+    <!-- ============================ -->
+    <section class="card hints-section">
+      <h2>📋 Требования к выполнению</h2>
       <ul>
-        <li>
-          <strong>querySelector / querySelectorAll</strong> — основной способ поиска элементов.
-          <code>querySelector</code> возвращает первый найденный, <code>querySelectorAll</code> — NodeList всех.
-        </li>
-        <li>
-          <strong>textContent vs innerHTML</strong> — для пользовательских данных всегда используйте
-          <code>textContent</code>. <code>innerHTML</code> допустим только для статичного, заранее известного HTML.
-        </li>
-        <li>
-          <strong>createElement + append</strong> — создавайте узлы через JS, не через строки HTML.
-        </li>
-        <li>
-          <strong>classList.toggle / add / remove</strong> — управляйте внешним видом через классы, а не через
-          прямое изменение <code>style</code>.
-        </li>
-        <li>
-          <strong>element.remove()</strong> — удаляет элемент из DOM напрямую, без ссылки на родителя.
-        </li>
+        <li>Все обработчики событий — через <code>addEventListener</code> в <code>script.js</code></li>
+        <li>Пользовательский текст вставляется только через <code>textContent</code> (защита от XSS)</li>
+        <li>Валидация: название не может быть короче 3 символов</li>
+        <li>При удалении всех карточек — подтверждение через <code>confirm()</code></li>
+        <li>Комментарии к каждому <code>createElement</code>, <code>append</code>, <code>remove</code>, <code>classList</code></li>
+        <li>Использовать <code>querySelector</code> / <code>querySelectorAll</code> для поиска элементов</li>
       </ul>
     </section>
-
-    <!-- ===== СЕКЦИЯ 6: ЧЕК-ЛИСТ СДАЧИ ===== -->
-    <section class="card" id="checklist-section">
-      <h2>✅ Чек-лист сдачи</h2>
-      <ol>
-        <li>Проект запускается через Live Server, в консоли нет ошибок.</li>
-        <li>Репозиторий <code>js-practice-06</code> создан и загружен на GitHub.</li>
-        <li>Папка <code>screenshots/</code> содержит минимум 4 скриншота.</li>
-        <li>Возле каждого ключевого метода DOM есть комментарий «ПОЧЕМУ?».</li>
-        <li>README.md заполнен: описание проекта + ответы на 5 вопросов для интервью.</li>
-        <li>Нигде нет <code>innerHTML</code> для вставки пользовательских данных.</li>
-      </ol>
-    </section>
-
   </main>
 
+  <!-- ============================ -->
+  <!-- ПОДВАЛ -->
+  <!-- ============================ -->
+  <footer>
+    <p>js-practice-06 · Группа 2509 · 2026</p>
+  </footer>
+
+  <!-- Подключение скрипта -->
   <script src="script.js"></script>
 </body>
 </html>

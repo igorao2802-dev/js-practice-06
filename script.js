@@ -1,207 +1,323 @@
-// =============================================
-// Практическая работа №6 — Работа с DOM
-// Starter Kit: script.js
-// Основная работа выполняется здесь!
-// =============================================
+"use strict";
 
-// =============================================
-// ШАБЛОН ОБЪЕКТА КАРТОЧКИ
-// Каждая карточка — это объект с такой структурой:
-// {
-//   id: Date.now(),       — уникальный идентификатор
-//   title: "...",         — название услуги
-//   category: "..."       — категория (design / dev / marketing)
-// }
-// =============================================
+/* =====================================================
+ПОИСК ЭЛЕМЕНТОВ DOM
+===================================================== */
+// Использую querySelector, потому что это современный стандарт для поиска элементов
+// querySelector позволяет использовать CSS-селекторы и работает с первым найденным элементом
+const titleInput = document.querySelector("#title-input");
+const descInput = document.querySelector("#desc-input");
+const categorySelect = document.querySelector("#category-select");
+const addBtn = document.querySelector("#add-btn");
+const clearBtn = document.querySelector("#clear-btn");
+const container = document.querySelector("#services-container");
+const countSpan = document.querySelector("#total-count");
+const toggleThemeBtn = document.querySelector("#toggle-theme");
+const highlightBtn = document.querySelector("#highlight-expensive");
+const filterFavBtn = document.querySelector("#filter-fav");
+const demoBtn = document.querySelector("#load-demo");
+const demo100Btn = document.querySelector("#load-100");
+const clearAllBtn = document.querySelector("#clear-all");
+const errorBlock = document.querySelector("#form-error");
 
+/* =====================================================
+ДАННЫЕ ПРИЛОЖЕНИЯ
+===================================================== */
+const cards = [];
 
-// =============================================
-// ШАГ 1: НАХОДИМ ЭЛЕМЕНТЫ В DOM
-// Используем querySelector — один раз в начале файла,
-// чтобы не искать элементы снова и снова внутри функций.
-// =============================================
-
-const serviceNameInput   = document.querySelector('#service-name');
-const categorySelect     = document.querySelector('#service-category');
-const addBtn             = document.querySelector('#add-btn');
-const clearFormBtn       = document.querySelector('#clear-form-btn');
-const validationMsg      = document.querySelector('#validation-msg');
-
-const servicesContainer  = document.querySelector('#services-container');
-const totalCount         = document.querySelector('#total-count');
-const emptyMsg           = document.querySelector('#empty-msg');
-
-const toggleThemeBtn     = document.querySelector('#toggle-theme-btn');
-const highlightDevBtn    = document.querySelector('#highlight-dev-btn');
-const showFavoritesBtn   = document.querySelector('#show-favorites-btn');
-const showAllBtn         = document.querySelector('#show-all-btn');
-
-const demoFillBtn        = document.querySelector('#demo-fill-btn');
-
-
-// =============================================
-// ШАГ 2: ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-// =============================================
-
-// --- Обновление счётчика карточек ---
-// TODO: Напишите функцию updateCounter()
-// Подсказка: используйте querySelectorAll('.service-card').length
-// Не забудьте комментарий «ПОЧЕМУ?» возле метода!
+/* =====================================================
+СЧЁТЧИК КАРТОЧЕК
+===================================================== */
 function updateCounter() {
-  // TODO: ваш код здесь
+    // Использую querySelectorAll().length, чтобы получить актуальное количество карточек в контейнере
+    // querySelectorAll возвращает NodeList всех элементов с классом .card
+    countSpan.textContent = container.querySelectorAll(".service-card").length;
 }
 
-
-// --- Показ/скрытие сообщения «список пуст» ---
-// TODO: Напишите функцию toggleEmptyMessage()
-// Подсказка: если в контейнере нет карточек — показать emptyMsg, иначе скрыть
-function toggleEmptyMessage() {
-  // TODO: ваш код здесь
+/* =====================================================
+ВЫВОД ОШИБОК
+===================================================== */
+function showError(message) {
+    // textContent используется для безопасного вывода текста (защита от XSS-атак)
+    // В отличие от innerHTML, textContent не выполняет HTML-код
+    errorBlock.textContent = message;
 }
 
-
-// --- Валидация формы ---
-// TODO: Напишите функцию validateInput(title)
-// Возвращает true, если название корректно (не пустое, минимум 3 символа)
-// При ошибке — выводит сообщение в validationMsg через textContent
-// При успехе — очищает validationMsg
-function validateInput(title) {
-  // TODO: ваш код здесь
+function clearError() {
+    errorBlock.textContent = "";
 }
 
-
-// =============================================
-// ШАГ 3: СОЗДАНИЕ КАРТОЧКИ
-// =============================================
-
-// TODO: Напишите функцию createCardElement(cardData)
-// Принимает объект { id, title, category }
-// Возвращает готовый DOM-элемент карточки
-//
-// Структура карточки:
-//   <div class="service-card" data-id="...">
-//     <h3>Название</h3>
-//     <span class="category-badge">Категория</span>
-//     <div class="card-actions">
-//       <button class="btn-secondary">⭐ В избранное</button>
-//       <button class="btn-danger">Удалить</button>
-//     </div>
-//   </div>
-//
-// ВАЖНО: вставляйте текст только через textContent!
-// Не забудьте комментарии «ПОЧЕМУ?» возле createElement, textContent, append
-function createCardElement(cardData) {
-  // TODO: ваш код здесь
+/* =====================================================
+ВАЛИДАЦИЯ ПОЛЯ ВВОДА
+===================================================== */
+function validate(title) {
+    const trimmed = title.trim();
+    if (trimmed === "") {
+        return "Введите название услуги";
+    }
+    if (trimmed.length < 3) {
+        return "Минимум 3 символа";
+    }
+    return null;
 }
 
-
-// =============================================
-// ШАГ 4: ДОБАВЛЕНИЕ КАРТОЧКИ
-// =============================================
-
-// TODO: Напишите обработчик для кнопки «Добавить»
-// Алгоритм:
-//   1. Считать значение из serviceNameInput и categorySelect
-//   2. Вызвать validateInput — если false, выйти (return)
-//   3. Создать объект карточки { id: Date.now(), title, category }
-//   4. Вызвать createCardElement и добавить результат в servicesContainer
-//   5. Очистить форму, обновить счётчик, скрыть emptyMsg
-addBtn.addEventListener('click', () => {
-  // TODO: ваш код здесь
-});
-
-
-// =============================================
-// ШАГ 5: ОЧИСТКА ФОРМЫ
-// =============================================
-
-// TODO: Напишите обработчик для кнопки «Очистить форму»
-// Очищает поля ввода и сообщение валидации
-clearFormBtn.addEventListener('click', () => {
-  // TODO: ваш код здесь
-});
-
-
-// =============================================
-// ШАГ 6: ПЕРЕКЛЮЧЕНИЕ ТЁМНОЙ ТЕМЫ
-// =============================================
-
-// TODO: Напишите обработчик для кнопки «Переключить тему»
-// Подсказка: document.body.classList.toggle(...)
-// Не забудьте комментарий «ПОЧЕМУ toggle, а не add/remove?»
-toggleThemeBtn.addEventListener('click', () => {
-  // TODO: ваш код здесь
-});
-
-
-// =============================================
-// ШАГ 7: ПОДСВЕТКА КАТЕГОРИИ «РАЗРАБОТКА»
-// =============================================
-
-// TODO: Напишите обработчик для кнопки «Подсветить Разработку»
-// Алгоритм:
-//   1. Найти все карточки через querySelectorAll
-//   2. Для каждой проверить data-атрибут категории
-//   3. Если категория === 'dev' — добавить класс highlight
-// Подсказка: используйте forEach по NodeList
-highlightDevBtn.addEventListener('click', () => {
-  // TODO: ваш код здесь
-});
-
-
-// =============================================
-// ШАГ 8: ФИЛЬТР «ПОКАЗАТЬ ТОЛЬКО ИЗБРАННЫЕ»
-// =============================================
-
-// TODO: Напишите обработчики для кнопок «Показать избранные» и «Показать все»
-// Подсказка: добавляйте/убирайте класс .hidden на карточках без .highlight
-showFavoritesBtn.addEventListener('click', () => {
-  // TODO: ваш код здесь
-});
-
-showAllBtn.addEventListener('click', () => {
-  // TODO: ваш код здесь
-});
-
-
-// =============================================
-// 🔴 PRO: ДЕМО-ПРАЙС ЧЕРЕЗ DocumentFragment
-// =============================================
-
-// Демо-данные — не трогать!
-const DEMO_SERVICES = [
-  { title: 'Разработка лендинга',      category: 'dev'       },
-  { title: 'SEO-оптимизация',          category: 'marketing' },
-  { title: 'Дизайн логотипа',          category: 'design'    },
-  { title: 'Настройка рекламы',        category: 'marketing' },
-  { title: 'Мобильное приложение',     category: 'dev'       },
-  { title: 'Фирменный стиль',          category: 'design'    },
-  { title: 'Email-рассылка',           category: 'marketing' },
-  { title: 'Интернет-магазин',         category: 'dev'       },
-  { title: 'UX-аудит сайта',           category: 'design'    },
-  { title: 'Контекстная реклама',      category: 'marketing' },
-];
-
-// TODO: Напишите обработчик для кнопки «Загрузить демо-прайс»
-// Алгоритм:
-//   1. Создать DocumentFragment
-//   2. Для каждого элемента DEMO_SERVICES создать карточку через createCardElement
-//   3. Добавить карточку в fragment (не в DOM!)
-//   4. Одним вызовом append вставить fragment в servicesContainer
-//   5. Обновить счётчик
-// Не забудьте комментарий «ПОЧЕМУ DocumentFragment, а не append в цикле?»
-demoFillBtn.addEventListener('click', () => {
-  // TODO: ваш код здесь
-});
-
-
-// =============================================
-// ИНИЦИАЛИЗАЦИЯ
-// Вызывается один раз при загрузке страницы
-// =============================================
-function init() {
-  updateCounter();
-  toggleEmptyMessage();
+/* =====================================================
+СОЗДАНИЕ КАРТОЧКИ УСЛУГИ
+===================================================== */
+function createCard(cardData) {
+    // createElement — создаю новый DOM-элемент динамически
+    // Использую createElement, потому что нужно создать элемент программно, а не через innerHTML
+    const card = document.createElement("div");
+    card.classList.add("service-card");
+    
+    // Добавляю data-id для идентификации карточки
+    card.dataset.id = cardData.id;
+    
+    /* ===== ЗАГОЛОВОК (с редактированием по клику) ===== */
+    const title = document.createElement("h3");
+    // textContent — защита от XSS при выводе пользовательских данных
+    // Использую textContent, потому что он экранирует HTML-теги и предотвращает инъекции кода
+    title.textContent = cardData.title;
+    title.style.cursor = "pointer";
+    title.title = "Нажмите для редактирования";
+    
+    /* ===== КАТЕГОРИЯ ===== */
+    const category = document.createElement("span");
+    category.textContent = cardData.category;
+    category.classList.add("category-badge");
+    
+    /* ===== ОПИСАНИЕ ===== */
+    const desc = document.createElement("p");
+    desc.textContent = cardData.description || "";
+    
+    /* ===== КНОПКА «В ИЗБРАННОЕ» ===== */
+    const favBtn = document.createElement("button");
+    favBtn.textContent = "В избранное";
+    favBtn.classList.add("btn-secondary");
+    favBtn.addEventListener("click", () => {
+        // classList.toggle — переключает класс highlight на карточке
+        // Использую toggle, потому что нужно добавлять/удалять класс одним методом
+        card.classList.toggle("highlight");
+    });
+    
+    /* ===== КНОПКА «УДАЛИТЬ» ===== */
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Удалить";
+    deleteBtn.classList.add("btn-danger");
+    deleteBtn.addEventListener("click", () => {
+        // remove — удаляет элемент из DOM
+        // Использую remove, потому что это современный и понятный способ удаления узла
+        card.remove();
+        updateCounter();
+    });
+    
+    /* ===== РЕДАКТИРОВАНИЕ ПО КЛИКУ НА ЗАГОЛОВОК ===== */
+    title.addEventListener("click", () => {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = title.textContent;
+        input.classList.add("input");
+        
+        // replaceChild — заменяет заголовок на input
+        card.replaceChild(input, title);
+        input.focus();
+        
+        input.addEventListener("blur", () => {
+            const newValue = input.value.trim();
+            if (newValue.length >= 3) {
+                // textContent — безопасное обновление текста
+                title.textContent = newValue;
+            }
+            card.replaceChild(title, input);
+        });
+        
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                input.blur();
+            }
+        });
+    });
+    
+    /* ===== ДОБАВЛЕНИЕ ВСЕХ ЭЛЕМЕНТОВ В КАРТОЧКУ ===== */
+    // append — добавляю несколько элементов за один раз
+    // Использую append, потому что можно добавить несколько узлов одним вызовом
+    card.append(title, category, desc, favBtn, deleteBtn);
+    
+    return card;
 }
 
-init();
+/* =====================================================
+ДОБАВЛЕНИЕ НОВОЙ КАРТОЧКИ
+===================================================== */
+addBtn.addEventListener("click", () => {
+    const title = titleInput.value;
+    const desc = descInput.value;
+    const category = categorySelect.value;
+    
+    // ВАЛИДАЦИЯ: проверяю название перед созданием карточки
+    const error = validate(title);
+    if (error) {
+        showError(error);
+        return;
+    }
+    
+    clearError();
+    
+    // Создаю объект карточки с уникальным ID
+    const newCard = {
+        id: Date.now(),
+        title: title.trim(),
+        description: desc.trim(),
+        category: category
+    };
+    
+    cards.push(newCard);
+    
+    // Создаю DOM-элемент карточки
+    const cardElement = createCard(newCard);
+    
+    // append — добавляю карточку в контейнер
+    // Использую append, потому что это современный метод добавления узла в DOM
+    container.append(cardElement);
+    
+    // Очищаю форму после успешного добавления
+    titleInput.value = "";
+    descInput.value = "";
+    clearError();
+    
+    // Обновляю счётчик
+    updateCounter();
+});
+
+/* =====================================================
+ОЧИСТКА ФОРМЫ
+===================================================== */
+clearBtn.addEventListener("click", () => {
+    titleInput.value = "";
+    descInput.value = "";
+    clearError();
+});
+
+/* =====================================================
+ПЕРЕКЛЮЧЕНИЕ ТЕМЫ (ТЁМНАЯ/СВЕТЛАЯ)
+===================================================== */
+toggleThemeBtn.addEventListener("click", () => {
+    // classList.toggle — переключает класс dark-theme на body
+    // Использую toggle, потому что нужно добавлять/удалять класс одним действием
+    document.body.classList.toggle("dark-theme");
+});
+
+/* =====================================================
+ПОДСВЕТКА КАРТОЧЕК КАТЕГОРИИ «РАЗРАБОТКА»
+===================================================== */
+highlightBtn.addEventListener("click", () => {
+    // querySelectorAll — нахожу все карточки в контейнере
+    const allCards = container.querySelectorAll(".service-card");
+    
+    allCards.forEach(card => {
+        // Нахожу элемент категории внутри карточки
+        const categoryEl = card.querySelector(".category-badge");
+        if (categoryEl && categoryEl.textContent === "Разработка") {
+            // classList.add — добавляю класс highlight
+            // Использую add, потому что нужно добавить класс без удаления других
+            card.classList.add("highlight");
+        }
+    });
+});
+
+/* =====================================================
+ФИЛЬТР «ПОКАЗАТЬ ТОЛЬКО ИЗБРАННЫЕ»
+===================================================== */
+filterFavBtn.addEventListener("click", () => {
+    const allCards = container.querySelectorAll(".service-card");
+    
+    allCards.forEach(card => {
+        // classList.contains — проверяю наличие класса highlight
+        if (!card.classList.contains("highlight")) {
+            // Добавляю класс hidden для скрытия карточки
+            card.classList.add("hidden");
+        } else {
+            // Удаляю класс hidden для отображения карточки
+            card.classList.remove("hidden");
+        }
+    });
+});
+
+/* =====================================================
+DEMO: ЗАГРУЗКА 50 КАРТОЧЕК (DocumentFragment)
+===================================================== */
+demoBtn.addEventListener("click", () => {
+    // DocumentFragment — создаю фрагмент документа для оптимизации
+    // Использую DocumentFragment, потому что вставка происходит за ОДИН раз в DOM
+    // Это уменьшает количество перерисовок страницы и улучшает производительность
+    const fragment = document.createDocumentFragment();
+    
+    for (let i = 1; i <= 50; i++) {
+        const cardData = {
+            id: Date.now() + i,
+            title: "Услуга " + i,
+            description: "Описание услуги номер " + i,
+            category: "Дизайн"
+        };
+        
+        // append — добавляю карточку во фрагмент (не в DOM напрямую)
+        fragment.append(createCard(cardData));
+    }
+    
+    // append — добавляю весь фрагмент в контейнер за один раз
+    container.append(fragment);
+    updateCounter();
+});
+
+/* =====================================================
+DEMO: ЗАГРУЗКА 100 КАРТОЧЕК (DocumentFragment)
+===================================================== */
+demo100Btn.addEventListener("click", () => {
+    // DocumentFragment — для оптимизации массовой вставки
+    const fragment = document.createDocumentFragment();
+    
+    for (let i = 1; i <= 100; i++) {
+        const cardData = {
+            id: Date.now() + i,
+            title: "Услуга PRO " + i,
+            description: "Расширенное описание услуги " + i,
+            category: "Маркетинг"
+        };
+        
+        fragment.append(createCard(cardData));
+    }
+    
+    container.append(fragment);
+    updateCounter();
+});
+
+/* =====================================================
+УДАЛЕНИЕ ВСЕХ КАРТОЧЕК (с подтверждением)
+===================================================== */
+clearAllBtn.addEventListener("click", () => {
+    // confirm — требую подтверждение перед массовым удалением
+    // Использую confirm, потому что это требование безопасности (защита от случайного удаления)
+    const confirmDelete = confirm("Удалить все карточки?");
+    
+    if (!confirmDelete) {
+        return;
+    }
+    
+    // textContent = "" — очищаю контейнер безопасно
+    // Использую textContent, потому что это удаляет все дочерние узлы без выполнения HTML
+    container.textContent = "";
+    
+    // Очищаю массив данных
+    cards.length = 0;
+    
+    updateCounter();
+});
+
+/* =====================================================
+ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+===================================================== */
+window.addEventListener("load", () => {
+    // Инициализирую счётчик при загрузке страницы
+    updateCounter();
+    console.log("Приложение загружено. Карточек:", container.querySelectorAll(".service-card").length);
+});
