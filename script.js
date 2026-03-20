@@ -15,12 +15,13 @@ const countSpan = document.querySelector("#total-count");
 const toggleThemeBtn = document.querySelector("#toggle-theme");
 const themeIcon = document.querySelector("#theme-icon");
 const themeText = document.querySelector("#theme-text");
-const highlightBtn = document.querySelector("#highlight-expensive");
+const highlightBtn = document.querySelector("#highlight-dev-btn");
 const highlightStar = document.querySelector("#highlight-star");
 const highlightMessage = document.querySelector("#highlight-message");
-const showAllBtn = document.querySelector("#show-all");
-const filterFavBtn = document.querySelector("#filter-fav");
+const showFavoritesBtn = document.querySelector("#show-favorites-btn");
+const showAllBtn = document.querySelector("#show-all-btn");
 const demoBtn = document.querySelector("#load-demo");
+const demo100Btn = document.querySelector("#load-100");
 const removeDemoBtn = document.querySelector("#remove-demo");
 const clearAllBtn = document.querySelector("#clear-all");
 const errorBlock = document.querySelector("#form-error");
@@ -68,7 +69,7 @@ function clearError() {
 /* =====================================================
 ВАЛИДАЦИЯ ПОЛЯ ВВОДА
 ===================================================== */
-function validate(title, description) {
+function validateTitle(title) {
     const trimmedTitle = title.trim();
     
     // Проверка на пустое название
@@ -92,19 +93,45 @@ function validate(title, description) {
         return "Недопустимое значение";
     }
     
-    // Проверка описания (не должно быть пустым)
-    if (description.trim() === "") {
-        return "Введите описание услуги";
-    }
-    
-    // Проверка первого символа описания
-    const firstDescChar = description.trim().charAt(0);
-    if (!/[А-Яа-яA-Za-z0-9]/.test(firstDescChar)) {
-        return "Описание должно начинаться с буквы или цифры";
-    }
-    
     return null;
 }
+
+/* =====================================================
+УПРАВЛЕНИЕ СТИЛЯМИ ПОЛЕЙ ВВОДА
+===================================================== */
+function setFieldValidity(field, isValid) {
+    // Удаляем оба класса сначала
+    field.classList.remove("valid", "invalid");
+    
+    // Добавляем соответствующий класс
+    if (isValid) {
+        // Синяя граница #2563EB при валидном вводе
+        field.classList.add("valid");
+    } else {
+        // Красная граница #FF5555 при невалидном вводе
+        field.classList.add("invalid");
+    }
+}
+
+function clearFieldValidity(field) {
+    // Сбрасываем стили валидации (серая граница #DCE3EB по умолчанию)
+    field.classList.remove("valid", "invalid");
+}
+
+// Обработчики для валидации в реальном времени
+titleInput.addEventListener("input", () => {
+    const error = validateTitle(titleInput.value);
+    if (titleInput.value.trim() === "") {
+        clearFieldValidity(titleInput);
+    } else {
+        setFieldValidity(titleInput, error === null);
+    }
+});
+
+descInput.addEventListener("input", () => {
+    // Описание необязательное, поэтому просто сбрасываем стили
+    clearFieldValidity(descInput);
+});
 
 /* =====================================================
 СОЗДАНИЕ КАРТОЧКИ УСЛУГИ
@@ -139,31 +166,37 @@ function createCard(cardData, isDemo = false) {
     // classList.add — добавляю класс для стилизации бейджа категории
     category.classList.add("category-badge");
     
-    /* ===== ОПИСАНИЕ ===== */
+    /* ===== ОПИСАНИЕ (необязательное поле) ===== */
     const desc = document.createElement("p");
     // textContent — защита от XSS при выводе описания
     desc.textContent = cardData.description || "";
+    if (!cardData.description) {
+        desc.style.display = "none";
+    }
     
-    /* ===== КНОПКА «В ИЗБРАННОЕ» ===== */
-    const favBtn = document.createElement("button");
-    // textContent — безопасный вывод текста кнопки
-    favBtn.textContent = "☆ В избранное";
-    favBtn.classList.add("btn-favorite");
-    favBtn.addEventListener("click", () => {
-        // classList.toggle — переключает класс highlight на карточке
-        // Использую toggle, потому что нужно добавлять/удалять класс одним методом
-        card.classList.toggle("highlight");
-        
-        // Изменяем текст и иконку кнопки
-        if (card.classList.contains("highlight")) {
-            favBtn.textContent = "★ Избранное";
-        } else {
-            favBtn.textContent = "☆ В избранное";
-        }
-        
-        updateCounter();
-    });
+/* ===== КНОПКА «В ИЗБРАННОЕ» ===== */
+const favBtn = document.createElement("button");
+// textContent — безопасный вывод текста кнопки
+// ИСПРАВЛЕНИЕ 1: Одинаковая длина текста для сохранения размера кнопки
+favBtn.textContent = "☆ В избранное";
+favBtn.classList.add("btn-favorite");
+favBtn.addEventListener("click", () => {
+    // Переключаем текст и иконку кнопки
+    // НЕ добавляем класс highlight на карточку (подсветка только для "Разработка")
+    const isFavorite = favBtn.textContent.includes("★");
     
+    if (isFavorite) {
+        // Текст такой же длины для сохранения размера кнопки
+        favBtn.textContent = "☆ В избранное";
+        card.dataset.isFavorite = "false";
+    } else {
+        // Текст такой же длины для сохранения размера кнопки
+        favBtn.textContent = "★ Избранное";
+        card.dataset.isFavorite = "true";
+    }
+    
+    updateCounter();
+});    
     /* ===== КНОПКА «УДАЛИТЬ» ===== */
     const deleteBtn = document.createElement("button");
     // textContent — безопасный вывод текста кнопки
@@ -184,12 +217,12 @@ function createCard(cardData, isDemo = false) {
         updateCounter();
     });
     
-    /* ===== РЕДАКТИРОВАНИЕ ПО КЛИКУ НА ЗАГОЛОВОК ===== */
+    /* ===== РЕДАКТИРОВАНИЕ ЗАГОЛОВКА ПО КЛИКУ ===== */
     title.addEventListener("click", () => {
         const input = document.createElement("input");
         input.type = "text";
         input.value = title.textContent;
-        input.classList.add("input");
+        input.classList.add("edit-input");
         
         // replaceChild — заменяет заголовок на input
         card.replaceChild(input, title);
@@ -202,6 +235,36 @@ function createCard(cardData, isDemo = false) {
                 title.textContent = newValue;
             }
             card.replaceChild(title, input);
+        });
+        
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                input.blur();
+            }
+        });
+    });
+    
+    /* ===== РЕДАКТИРОВАНИЕ ОПИСАНИЯ ПО КЛИКУ ===== */
+    desc.addEventListener("click", () => {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = desc.textContent;
+        input.classList.add("edit-input");
+        
+        // replaceChild — заменяет описание на input
+        card.replaceChild(input, desc);
+        input.focus();
+        
+        input.addEventListener("blur", () => {
+            const newValue = input.value.trim();
+            // textContent — безопасное обновление текста
+            desc.textContent = newValue;
+            if (newValue === "") {
+                desc.style.display = "none";
+            } else {
+                desc.style.display = "block";
+            }
+            card.replaceChild(desc, input);
         });
         
         input.addEventListener("keydown", (e) => {
@@ -232,14 +295,17 @@ addBtn.addEventListener("click", () => {
     const desc = descInput.value;
     const category = categorySelect.value;
     
-    // ВАЛИДАЦИЯ: проверяю название и описание перед созданием карточки
-    const error = validate(title, desc);
+    // ВАЛИДАЦИЯ: проверяю название перед созданием карточки
+    // Описание необязательное, поэтому не проверяем
+    const error = validateTitle(title);
     if (error) {
         showError(error);
+        setFieldValidity(titleInput, false);
         return;
     }
     
     clearError();
+    setFieldValidity(titleInput, true);
     
     // Создаю объект карточки с уникальным ID
     const newCard = {
@@ -261,6 +327,8 @@ addBtn.addEventListener("click", () => {
     // Очищаю форму после успешного добавления
     titleInput.value = "";
     descInput.value = "";
+    clearFieldValidity(titleInput);
+    clearFieldValidity(descInput);
     clearError();
     
     // Обновляю счётчик
@@ -273,6 +341,8 @@ addBtn.addEventListener("click", () => {
 clearBtn.addEventListener("click", () => {
     titleInput.value = "";
     descInput.value = "";
+    clearFieldValidity(titleInput);
+    clearFieldValidity(descInput);
     clearError();
 });
 
@@ -280,20 +350,16 @@ clearBtn.addEventListener("click", () => {
 ПЕРЕКЛЮЧЕНИЕ ТЕМЫ (ТЁМНАЯ/СВЕТЛАЯ) С ИКОНКОЙ
 ===================================================== */
 toggleThemeBtn.addEventListener("click", () => {
-    // classList.toggle — переключает класс dark-theme на body
-    // Использую toggle, потому что нужно добавлять/удалять класс одним действием
     document.body.classList.toggle("dark-theme");
     
-    // Обновляем иконку и текст кнопки
     const isDark = document.body.classList.contains("dark-theme");
     
     if (isDark) {
-        // textContent — безопасная установка текста иконки
         themeIcon.textContent = "🌞";
-        themeText.textContent = "Светлая";
+        themeText.textContent = "Включить светлую тему"; // 
     } else {
         themeIcon.textContent = "🌙";
-        themeText.textContent = "Тёмная";
+        themeText.textContent = "Включить тёмную тему"; // 
     }
 });
 
@@ -360,12 +426,14 @@ showAllBtn.addEventListener("click", () => {
 /* =====================================================
 ФИЛЬТР «ПОКАЗАТЬ ТОЛЬКО ИЗБРАННЫЕ»
 ===================================================== */
-filterFavBtn.addEventListener("click", () => {
+showFavoritesBtn.addEventListener("click", () => {
     const allCards = container.querySelectorAll(".service-card");
     
     allCards.forEach(card => {
-        // classList.contains — проверяю наличие класса highlight
-        if (!card.classList.contains("highlight")) {
+        // dataset.isFavorite — проверяю, добавлена ли карточка в избранное
+        const isFavorite = card.dataset.isFavorite === "true";
+        
+        if (!isFavorite) {
             // classList.add — добавляю класс hidden для скрытия карточки
             // Использую classList вместо style.display, потому что это разделяет логику и стили
             card.classList.add("hidden");
@@ -385,7 +453,7 @@ demoBtn.addEventListener("click", () => {
     // Это уменьшает количество перерисовок страницы и улучшает производительность
     const fragment = document.createDocumentFragment();
     
-    // Демо-данные (10 карточек как на скриншоте)
+    // Демо-данные (10 карточек)
     const demoServices = [
         { title: "Разработка лендинга", category: "Разработка", description: "Создание одностраничного сайта" },
         { title: "SEO-аудит сайта", category: "Маркетинг", description: "Анализ и оптимизация для поисковиков" },
@@ -413,6 +481,29 @@ demoBtn.addEventListener("click", () => {
     }
     
     // append — добавляю весь фрагмент в контейнер за один раз
+    container.append(fragment);
+    updateCounter();
+});
+
+/* =====================================================
+DEMO: ЗАГРУЗКА 100 ДЕМО-КАРТОЧЕК (DocumentFragment)
+===================================================== */
+demo100Btn.addEventListener("click", () => {
+    // DocumentFragment — создаю фрагмент документа для оптимизации
+    const fragment = document.createDocumentFragment();
+    
+    for (let i = 1; i <= 100; i++) {
+        const cardData = {
+            id: Date.now() + i + Math.random(),
+            title: "Услуга PRO " + i,
+            description: "Расширенное описание услуги " + i,
+            category: i % 3 === 0 ? "Дизайн" : (i % 3 === 1 ? "Разработка" : "Маркетинг")
+        };
+        
+        fragment.append(createCard(cardData, true));
+        demoCardsCount++;
+    }
+    
     container.append(fragment);
     updateCounter();
 });

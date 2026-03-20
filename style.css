@@ -108,21 +108,34 @@ textarea {
     flex: 1;
     min-width: 200px;
     padding: 8px 10px;
-    border: 1px solid #cbd5e1;
+    /* По умолчанию граница серая #DCE3EB */
+    border: 1px solid #DCE3EB;
     border-radius: 6px;
     font-size: 0.95rem;
     transition: border-color 0.2s;
+    outline: none;
+}
+
+/* Поле активно + валидно (синий #2563EB) */
+input[type="text"].valid,
+textarea.valid {
+    border-color: #2563EB;
+}
+
+/* Поле активно + невалидно (красный #FF5555) */
+input[type="text"].invalid,
+textarea.invalid {
+    border-color: #FF5555;
 }
 
 input[type="text"]:focus,
 textarea:focus {
     outline: none;
-    border-color: #3b82f6;
 }
 
 select {
     padding: 8px 10px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid #DCE3EB;
     border-radius: 6px;
     font-size: 0.95rem;
     background: #fff;
@@ -140,30 +153,36 @@ select {
 button {
     padding: 8px 16px;
     border: none;
-    /* Все кнопки синие #3D82F5 */
-    background-color: #3D82F5;
-    color: #fff;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.9rem;
     transition: background-color 0.2s ease, opacity 0.2s;
 }
 
-button:hover {
+/* Основные кнопки - синие */
+button.btn-primary {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+button.btn-primary:hover {
     background-color: #2563eb;
 }
 
+/* Второстепенные кнопки - серые #617488 */
 button.btn-secondary {
-    background-color: #3D82F5;
+    background-color: #617488;
+    color: #fff;
 }
 
 button.btn-secondary:hover {
-    background-color: #2563eb;
+    background-color: #475569;
 }
 
-/* Кнопки удаления - красные #F34347 */
+/* Кнопки удаления - красные */
 button.btn-danger {
-    background-color: #F34347;
+    background-color: #ef4444;
+    color: #fff;
 }
 
 button.btn-danger:hover {
@@ -205,7 +224,8 @@ button.btn-danger:hover {
 
 /* ----- СЧЁТЧИК ----- */
 .counter-line {
-    margin: 14px 0 0;
+    /* ОТСТУП после счётчика, чтобы карточки не примыкали вплотную */
+    margin: 14px 0 20px;
     font-size: 0.9rem;
     color: #475569;
 }
@@ -233,6 +253,8 @@ body.dark-theme #total-count {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 14px;
+    /* ОТСТУП сверху, чтобы карточки не примыкали к счётчику */
+    margin-top: 20px;
 }
 
 /* ----- КАРТОЧКИ УСЛУГ (создаются через JS) ----- */
@@ -266,6 +288,16 @@ body.dark-theme .service-card h3 {
     color: #e2e8f0;
 }
 
+.service-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+body.dark-theme .service-card p {
+    color: #94a3b8;
+}
+
 .service-card .category-badge {
     display: inline-block;
     font-size: 0.75rem;
@@ -282,16 +314,6 @@ body.dark-theme .service-card .category-badge {
     color: #dbeafe;
 }
 
-.service-card p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #64748b;
-}
-
-body.dark-theme .service-card p {
-    color: #94a3b8;
-}
-
 /* ----- КНОПКИ В КАРТОЧКЕ ----- */
 .service-card .card-actions {
     display: flex;
@@ -303,11 +325,16 @@ body.dark-theme .service-card p {
     flex: 1;
     padding: 6px 10px;
     font-size: 0.8rem;
+    /* Фиксированная минимальная ширина кнопки */
+    min-width: 100px;
+    /* Чтобы текст не переносился и кнопка не меняла размер */
+    white-space: nowrap;
 }
 
 /* Кнопка "В избранное" - синяя */
 .service-card .btn-favorite {
     background-color: #3D82F5;
+    color: #fff;
 }
 
 .service-card .btn-favorite:hover {
@@ -317,26 +344,15 @@ body.dark-theme .service-card p {
 /* Кнопка "Удалить" - красная */
 .service-card .btn-delete {
     background-color: #F34347;
+    color: #fff;
 }
 
 .service-card .btn-delete:hover {
     background-color: #dc2626;
 }
 
-/* ----- ПОДСВЕТКА «ИЗБРАННОЕ» (добавляется через JS) ----- */
-/* ВАЖНО: Класс .highlight используется для избранных карточек */
-.service-card.highlight {
-    border-color: #f59e0b;
-    background: #fffbeb;
-    box-shadow: 0 0 0 2px #fcd34d;
-}
-
-body.dark-theme .service-card.highlight {
-    background: #2d2010;
-    border-color: #f59e0b;
-}
-
 /* ----- ПОДСВЕТКА КАТЕГОРИИ «РАЗРАБОТКА» ----- */
+/* ВАЖНО: Подсветка применяется ТОЛЬКО для категории "Разработка" */
 .service-card.category-highlight {
     border-color: #f59e0b;
     background: #fffbeb;
@@ -354,6 +370,16 @@ body.dark-theme .service-card.category-highlight {
     display: none;
 }
 
+/* ----- INPUT ДЛЯ РЕДАКТИРОВАНИЯ НА ЛЕТУ ----- */
+.service-card .edit-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #2563EB;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
 /* ----- СЕКЦИЯ ПОДСКАЗОК ----- */
 .hints-section ul {
     margin: 0;
@@ -366,6 +392,16 @@ body.dark-theme .service-card.category-highlight {
 .hints-section li {
     font-size: 0.9rem;
     line-height: 1.5;
+}
+
+/* Полужирный текст перед тире (не код) */
+.hints-section li strong {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+body.dark-theme .hints-section li strong {
+    color: #e2e8f0;
 }
 
 code {
@@ -385,7 +421,21 @@ body.dark-theme code {
 .hint {
     font-size: 0.88rem;
     color: #64748b;
-    margin: 12px 0 0;
+    margin: 0 0 12px;
+    line-height: 1.5;
+}
+
+/* ----- ЧЕК-ЛИСТ ----- */
+.checklist-section ol {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.checklist-section li {
+    font-size: 0.9rem;
     line-height: 1.5;
 }
 

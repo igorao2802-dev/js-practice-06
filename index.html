@@ -20,7 +20,7 @@
     <!-- СОЗДАНИЕ КАРТОЧКИ -->
     <!-- ============================ -->
     <section class="card">
-      <h2>Создать карточку</h2>
+      <h2>Задание 1 — Добавить карточку услуги</h2>
       
       <div class="form-group">
         <label for="title-input">Название услуги:</label>
@@ -29,7 +29,7 @@
       
       <div class="form-group">
         <label for="desc-input">Описание:</label>
-        <textarea id="desc-input" placeholder="Краткое описание услуги"></textarea>
+        <textarea id="desc-input" placeholder="Краткое описание услуги (необязательно)"></textarea>
       </div>
       
       <div class="form-group">
@@ -54,26 +54,20 @@
     <!-- УПРАВЛЕНИЕ ОТОБРАЖЕНИЕМ -->
     <!-- ============================ -->
     <section class="card">
-      <h2>Управление отображением</h2>
+      <h2>Задание 2 — Управление стилями</h2>
       
       <div class="buttons">
-        <!-- Кнопка переключения темы с иконкой -->
-        <button id="toggle-theme" class="btn-secondary">
-          <span id="theme-icon">🌙</span> <span id="theme-text">Тёмная</span>
+        <!-- Кнопка переключения темы с изменённым текстом -->
+        <button id="toggle-theme" class="btn-primary">
+          <span id="theme-icon">🌙</span> <span id="theme-text">Включить тёмную тему</span>
         </button>
-        <button id="highlight-expensive" class="btn-secondary">
-          <span id="highlight-star">⭐</span> Подсветить "Разработка"
+        <!-- Кнопка подсветки категории - синяя (btn-primary) -->
+        <button id="highlight-dev-btn" class="btn-primary">
+          <span id="highlight-star">⭐</span> Подсветить «Разработку»
         </button>
-        <button id="show-all" class="btn-secondary">Показать все</button>
-        <button id="filter-fav" class="btn-secondary">Показать только избранные</button>
+        <button id="show-favorites-btn" class="btn-secondary">Показать избранные</button>
+        <button id="show-all-btn" class="btn-secondary">Показать все</button>
       </div>
-      
-      <div class="counter-line">
-        Количество карточек: <span id="total-count">0</span>
-      </div>
-      
-      <!-- Сообщение для подсветки категории -->
-      <div id="highlight-message" class="highlight-msg"></div>
     </section>
 
     <!-- ============================ -->
@@ -82,11 +76,16 @@
     <section class="card">
       <h2>Каталог услуг</h2>
       
+      <!-- Счётчик перенесён из блока "Управление отображением" -->
+      <div class="counter-line">
+        Карточек в каталоге: <span id="total-count">0</span>
+      </div>
+      
       <!-- Контейнер для карточек (создаются через JS) -->
       <div id="services-container"></div>
       
       <!-- Сообщение, если список пуст -->
-      <p id="empty-msg" class="empty-msg">Список услуг пуст. Добавьте первую карточку!</p>
+      <p id="empty-msg" class="empty-msg">Карточек пока нет. Добавьте первую!</p>
     </section>
 
     <!-- ============================ -->
@@ -97,26 +96,47 @@
       
       <div class="buttons">
         <button id="load-demo" class="btn-primary">Загрузить демо-прайс</button>
+        <button id="load-100" class="btn-secondary">Заполнить демо (100 карточек)</button>
         <button id="remove-demo" class="btn-danger">Удалить демо-карточки</button>
         <button id="clear-all" class="btn-danger">Удалить все карточки</button>
       </div>
       
-      <p class="hint">Нажмите кнопку — в каталог добавятся 10 демо-карточек за один раз.</p>
+      <!-- Подсказка перемещена ПОСЛЕ кнопок с обновлённым текстом -->
+      <p class="hint">
+        <strong>Загрузить демо-прайс</strong> — добавит 10 готовых карточек услуг в каталог.<br>
+        <strong>Заполнить демо (100 карточек)</strong> — добавит 100 тестовых карточек для проверки производительности.<br>
+        <strong>Удалить демо-карточки</strong> — удалит только карточки, загруженные через демо-кнопки.<br>
+        <strong>Удалить все карточки</strong> — очистит весь каталог услуг полностью.
+      </p>
     </section>
 
+<!-- ============================ -->
+<!-- ПОДСКАЗКИ -->
+<!-- ============================ -->
+<section class="card hints-section">
+  <h2>📘 Подсказки</h2>
+  <ul>
+    <li><strong>querySelector / querySelectorAll</strong> — основной способ поиска элементов. <code>querySelector</code> возвращает первый найденный, <code>querySelectorAll</code> — NodeList всех.</li>
+    <li><strong>textContent vs innerHTML</strong> — для пользовательских данных всегда используйте <code>textContent</code>. <code>innerHTML</code> допустим только для статичного, заранее известного HTML.</li>
+    <li><strong>createElement + append</strong> — создавайте узлы через JS, не через строки HTML.</li>
+    <li><strong>classList.toggle / add / remove</strong> — управляйте внешним видом через классы, а не через прямое изменение <code>style</code>.</li>
+    <li><strong>element.remove()</strong> — удаляет элемент из DOM напрямую, без ссылки на родителя.</li>
+  </ul>
+</section>
+
     <!-- ============================ -->
-    <!-- ПОДСКАЗКИ -->
+    <!-- ЧЕК-ЛИСТ СДАЧИ -->
     <!-- ============================ -->
-    <section class="card hints-section">
-      <h2> Требования к выполнению</h2>
-      <ul>
-        <li>Все обработчики событий — через <code>addEventListener</code> в <code>script.js</code></li>
-        <li>Пользовательский текст вставляется только через <code>textContent</code> (защита от XSS)</li>
-        <li>Валидация: название не может быть короче 3 символов, описание не пустое</li>
-        <li>При удалении карточек — подтверждение через <code>confirm()</code></li>
-        <li>Комментарии к каждому <code>createElement</code>, <code>append</code>, <code>remove</code>, <code>classList</code></li>
-        <li>Использовать <code>querySelector</code> / <code>querySelectorAll</code> для поиска элементов</li>
-      </ul>
+    <section class="card checklist-section">
+      <h2>✅ Чек-лист сдачи</h2>
+      <ol>
+        <li>Проект запускается через Live Server, в консоли нет ошибок.</li>
+        <li>Репозиторий <code>js-practice-06</code> создан и загружен на GitHub.</li>
+        <li>Папка <code>screenshots/</code> содержит минимум 4 скриншота.</li>
+        <li>Возле каждого ключевого метода DOM есть комментарий «ПОЧЕМУ?».</li>
+        <li>README.md заполнен: описание проекта + ответы на 5 вопросов для интервью.</li>
+        <li>Нигде нет <code>innerHTML</code> для вставки пользовательских данных.</li>
+      </ol>
     </section>
   </main>
 
