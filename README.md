@@ -1,4 +1,3 @@
-```markdown
 # 📦 Практическая работа №6: Работа с DOM
 
 > Проект «Интерактивная витрина услуг» — закрепление тем: querySelector, textContent, classList, createElement, DocumentFragment.
