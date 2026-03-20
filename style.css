@@ -230,12 +230,12 @@ button.btn-danger:hover {
     color: #475569;
 }
 
-#total-count {
+#card-count {
     font-weight: bold;
     color: #1e40af;
 }
 
-body.dark-theme #total-count {
+body.dark-theme #card-count {
     color: #93c5fd;
 }
 
@@ -249,7 +249,7 @@ body.dark-theme #total-count {
 }
 
 /* ----- КАТАЛОГ УСЛУГ (GRID) ----- */
-#services-container {
+#card-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 14px;
@@ -351,17 +351,32 @@ body.dark-theme .service-card .category-badge {
     background-color: #dc2626;
 }
 
-/* ----- ПОДСВЕТКА КАТЕГОРИИ «РАЗРАБОТКА» ----- */
-/* ВАЖНО: Подсветка применяется ТОЛЬКО для категории "Разработка" */
-.service-card.category-highlight {
+/* ----- ПОДСВЕТКА «ИЗБРАННОЕ» (добавляется через JS) ----- */
+/* ВАЖНО: Класс .highlight используется для избранных карточек */
+/* При клике на "В избранное" карточке добавляется этот класс */
+.service-card.highlight {
     border-color: #f59e0b;
     background: #fffbeb;
     box-shadow: 0 0 0 2px #fcd34d;
 }
 
-body.dark-theme .service-card.category-highlight {
+body.dark-theme .service-card.highlight {
     background: #2d2010;
     border-color: #f59e0b;
+}
+
+/* ----- ПОДСВЕТКА КАТЕГОРИИ «РАЗРАБОТКА» ----- */
+/* ВАЖНО: Временная подсветка для категории "Разработка" */
+/* Не влияет на фильтр избранных */
+.service-card.dev-highlight {
+    border-color: #10b981;
+    background: #ecfdf5;
+    box-shadow: 0 0 0 2px #34d399;
+}
+
+body.dark-theme .service-card.dev-highlight {
+    background: #064e3b;
+    border-color: #10b981;
 }
 
 /* ----- СКРЫТИЕ КАРТОЧЕК ПРИ ФИЛЬТРЕ (добавляется через JS) ----- */
@@ -477,7 +492,7 @@ footer {
         width: 100%;
     }
 
-    #services-container {
+    #card-container {
         grid-template-columns: 1fr;
     }
 }

@@ -5,21 +5,22 @@
 ===================================================== */
 // Использую querySelector, потому что это современный стандарт для поиска элементов
 // querySelector позволяет использовать CSS-селекторы и работает с первым найденным элементом
+// Это соответствует требованию ТЗ: никаких getElementById, только querySelector/querySelectorAll
 const titleInput = document.querySelector("#title-input");
 const descInput = document.querySelector("#desc-input");
 const categorySelect = document.querySelector("#category-select");
 const addBtn = document.querySelector("#add-btn");
 const clearBtn = document.querySelector("#clear-btn");
-const container = document.querySelector("#services-container");
-const countSpan = document.querySelector("#total-count");
+const container = document.querySelector("#card-container"); // ID по ТЗ
+const countSpan = document.querySelector("#card-count"); // ID по ТЗ
 const toggleThemeBtn = document.querySelector("#toggle-theme");
 const themeIcon = document.querySelector("#theme-icon");
 const themeText = document.querySelector("#theme-text");
-const highlightBtn = document.querySelector("#highlight-dev-btn");
+const highlightBtn = document.querySelector("#highlight-expensive"); // ID по ТЗ
 const highlightStar = document.querySelector("#highlight-star");
 const highlightMessage = document.querySelector("#highlight-message");
-const showFavoritesBtn = document.querySelector("#show-favorites-btn");
-const showAllBtn = document.querySelector("#show-all-btn");
+const filterFavBtn = document.querySelector("#filter-fav");
+const showAllBtn = document.querySelector("#show-all");
 const demoBtn = document.querySelector("#load-demo");
 const demo100Btn = document.querySelector("#load-100");
 const removeDemoBtn = document.querySelector("#remove-demo");
@@ -31,8 +32,8 @@ const emptyMsg = document.querySelector("#empty-msg");
 ДАННЫЕ ПРИЛОЖЕНИЯ
 ===================================================== */
 const cards = [];
-let isHighlightActive = false; // Флаг состояния подсветки категории
-let demoCardsCount = 0; // Счётчик демо-карточек
+let isDevHighlightActive = false; // Флаг состояния подсветки категории "Разработка"
+let demoCardsCount = 0; // Счётчик демо-карточек для своевременного обнуления
 
 /* =====================================================
 СЧЁТЧИК КАРТОЧЕК
@@ -40,10 +41,12 @@ let demoCardsCount = 0; // Счётчик демо-карточек
 function updateCounter() {
     // Использую querySelectorAll().length, чтобы получить актуальное количество карточек в контейнере
     // querySelectorAll возвращает NodeList всех элементов с классом .service-card
+    // Это безопасный способ подсчёта, который не зависит от массива cards
     const count = container.querySelectorAll(".service-card").length;
     countSpan.textContent = count;
     
     // Показываю сообщение "Список пуст", если карточек нет
+    // Это улучшает пользовательский опыт, показывая понятное сообщение
     if (count === 0) {
         emptyMsg.style.display = "block";
     } else {
@@ -56,7 +59,7 @@ function updateCounter() {
 ===================================================== */
 function showError(message) {
     // textContent используется для безопасного вывода текста (защита от XSS-атак)
-    // В отличие от innerHTML, textContent не выполняет HTML-код
+    // В отличие от innerHTML, textContent не выполняет HTML-код, что предотвращает инъекции
     errorBlock.textContent = message;
     errorBlock.style.display = "block";
 }
@@ -83,12 +86,14 @@ function validateTitle(title) {
     }
     
     // Проверка первого символа (не цифра и не спецсимвол)
+    // Это защищает от некорректных названий типа "123 услуга" или "@дизайн"
     const firstChar = trimmedTitle.charAt(0);
     if (!/[А-Яа-яA-Za-z]/.test(firstChar)) {
         return "Первый символ должен быть буквой";
     }
     
     // Проверка на бесконечность и специальные значения
+    // Защита от попыток ввода специальных JavaScript значений
     if (trimmedTitle.toLowerCase() === "infinity" || trimmedTitle.toLowerCase() === "nan") {
         return "Недопустимое значение";
     }
@@ -100,25 +105,27 @@ function validateTitle(title) {
 УПРАВЛЕНИЕ СТИЛЯМИ ПОЛЕЙ ВВОДА
 ===================================================== */
 function setFieldValidity(field, isValid) {
-    // Удаляем оба класса сначала
+    // Удаляем оба класса сначала, чтобы избежать конфликтов стилей
     field.classList.remove("valid", "invalid");
     
-    // Добавляем соответствующий класс
+    // Добавляем соответствующий класс в зависимости от результата валидации
     if (isValid) {
-        // Синяя граница #2563EB при валидном вводе
+        // Синяя граница #2563EB при валидном вводе — визуальная обратная связь для пользователя
         field.classList.add("valid");
     } else {
-        // Красная граница #FF5555 при невалидном вводе
+        // Красная граница #FF5555 при невалидном вводе — предупреждение об ошибке
         field.classList.add("invalid");
     }
 }
 
 function clearFieldValidity(field) {
     // Сбрасываем стили валидации (серая граница #DCE3EB по умолчанию)
+    // Это нужно при очистке формы, чтобы поля вернулись к исходному состоянию
     field.classList.remove("valid", "invalid");
 }
 
 // Обработчики для валидации в реальном времени
+// Это улучшает UX, показывая ошибки сразу при вводе, а не после нажатия кнопки
 titleInput.addEventListener("input", () => {
     const error = validateTitle(titleInput.value);
     if (titleInput.value.trim() === "") {
@@ -130,6 +137,7 @@ titleInput.addEventListener("input", () => {
 
 descInput.addEventListener("input", () => {
     // Описание необязательное, поэтому просто сбрасываем стили
+    // Пользователь может оставить это поле пустым без ошибок
     clearFieldValidity(descInput);
 });
 
@@ -139,72 +147,88 @@ descInput.addEventListener("input", () => {
 function createCard(cardData, isDemo = false) {
     // createElement — создаю новый DOM-элемент динамически
     // Использую createElement, потому что нужно создать элемент программно, а не через innerHTML
+    // Это безопаснее и позволяет контролировать каждый узел отдельно
     const card = document.createElement("div");
+    
     // classList.add — добавляю класс service-card для стилизации
     // Использую classList.add, потому что это безопасный способ добавления классов
+    // Он не перезаписывает существующие классы, в отличие от className
     card.classList.add("service-card");
     
     // Добавляю data-id для идентификации карточки
+    // Это позволяет найти конкретную карточку позже для редактирования или удаления
     card.dataset.id = cardData.id;
-    // Помечаем демо-карточки
+    
+    // Помечаем демо-карточки для возможности массового удаления
     if (isDemo) {
         card.dataset.isDemo = "true";
     }
     
     /* ===== ЗАГОЛОВОК (с редактированием по клику) ===== */
     const title = document.createElement("h3");
+    
     // textContent — защита от XSS при выводе пользовательских данных
     // Использую textContent, потому что он экранирует HTML-теги и предотвращает инъекции кода
+    // Если пользователь введёт "<script>alert('XSS')</script>", это отобразится как текст, а не выполнится
     title.textContent = cardData.title;
     title.style.cursor = "pointer";
     title.title = "Нажмите для редактирования";
     
     /* ===== КАТЕГОРИЯ ===== */
     const category = document.createElement("span");
+    
     // textContent — безопасный вывод категории
     category.textContent = cardData.category;
+    
     // classList.add — добавляю класс для стилизации бейджа категории
     category.classList.add("category-badge");
     
     /* ===== ОПИСАНИЕ (необязательное поле) ===== */
     const desc = document.createElement("p");
+    
     // textContent — защита от XSS при выводе описания
     desc.textContent = cardData.description || "";
     if (!cardData.description) {
         desc.style.display = "none";
     }
     
-/* ===== КНОПКА «В ИЗБРАННОЕ» ===== */
-const favBtn = document.createElement("button");
-// textContent — безопасный вывод текста кнопки
-// ИСПРАВЛЕНИЕ 1: Одинаковая длина текста для сохранения размера кнопки
-favBtn.textContent = "☆ В избранное";
-favBtn.classList.add("btn-favorite");
-favBtn.addEventListener("click", () => {
-    // Переключаем текст и иконку кнопки
-    // НЕ добавляем класс highlight на карточку (подсветка только для "Разработка")
-    const isFavorite = favBtn.textContent.includes("★");
+    /* ===== КНОПКА «В ИЗБРАННОЕ» ===== */
+    const favBtn = document.createElement("button");
     
-    if (isFavorite) {
-        // Текст такой же длины для сохранения размера кнопки
-        favBtn.textContent = "☆ В избранное";
-        card.dataset.isFavorite = "false";
-    } else {
-        // Текст такой же длины для сохранения размера кнопки
-        favBtn.textContent = "★ Избранное";
-        card.dataset.isFavorite = "true";
-    }
+    // textContent — безопасный вывод текста кнопки
+    // ИСПРАВЛЕНИЕ: Одинаковая длина текста для сохранения размера кнопки
+    favBtn.textContent = "☆ В избранное";
+    favBtn.classList.add("btn-favorite");
     
-    updateCounter();
-});    
+    favBtn.addEventListener("click", () => {
+        // ИСПРАВЛЕНИЕ: При клике на "В избранное" карточке добавляется класс .highlight
+        // classList.toggle переключает класс .highlight, меняющий фон карточки
+        // Использую toggle, потому что нужно добавлять/удалять класс одним действием
+        card.classList.toggle("highlight");
+        
+        // Обновляем текст кнопки в зависимости от состояния
+        if (card.classList.contains("highlight")) {
+            favBtn.textContent = "★ Избранное";
+            card.dataset.isFavorite = "true";
+        } else {
+            favBtn.textContent = "☆ В избранное";
+            card.dataset.isFavorite = "false";
+        }
+        
+        updateCounter();
+    });
+    
     /* ===== КНОПКА «УДАЛИТЬ» ===== */
     const deleteBtn = document.createElement("button");
+    
     // textContent — безопасный вывод текста кнопки
     deleteBtn.textContent = "Удалить";
     deleteBtn.classList.add("btn-delete");
+    
     deleteBtn.addEventListener("click", () => {
         // confirm — требую подтверждение перед удалением
         // Использую confirm, потому что это требование безопасности (защита от случайного удаления)
+        // Пользователь должен осознанно подтвердить действие
         const confirmDelete = confirm("Вы уверены, что хотите удалить эту карточку?");
         
         if (!confirmDelete) {
@@ -213,7 +237,11 @@ favBtn.addEventListener("click", () => {
         
         // remove — удаляет элемент из DOM
         // Использую remove, потому что это современный и понятный способ удаления узла
+        // Не нужно искать родителя и вызывать removeChild, элемент удаляет сам себя
         card.remove();
+        
+        // Обновляем счётчик после удаления
+        // Это важно для актуального отображения количества карточек
         updateCounter();
     });
     
@@ -225,6 +253,7 @@ favBtn.addEventListener("click", () => {
         input.classList.add("edit-input");
         
         // replaceChild — заменяет заголовок на input
+        // Это позволяет редактировать текст "на лету" без перезагрузки страницы
         card.replaceChild(input, title);
         input.focus();
         
@@ -281,6 +310,7 @@ favBtn.addEventListener("click", () => {
     
     // append — добавляю несколько элементов за один раз
     // Использую append, потому что можно добавить несколько узлов одним вызовом
+    // Это эффективнее, чем вызывать appendChild несколько раз
     actionsDiv.append(favBtn, deleteBtn);
     card.append(title, category, desc, actionsDiv);
     
@@ -308,6 +338,7 @@ addBtn.addEventListener("click", () => {
     setFieldValidity(titleInput, true);
     
     // Создаю объект карточки с уникальным ID
+    // Date.now() гарантирует уникальность ID в рамках одной сессии
     const newCard = {
         id: Date.now(),
         title: title.trim(),
@@ -350,16 +381,19 @@ clearBtn.addEventListener("click", () => {
 ПЕРЕКЛЮЧЕНИЕ ТЕМЫ (ТЁМНАЯ/СВЕТЛАЯ) С ИКОНКОЙ
 ===================================================== */
 toggleThemeBtn.addEventListener("click", () => {
+    // classList.toggle — переключает класс dark-theme на body
+    // Использую toggle, потому что нужно добавлять/удалять класс одним действием
+    // Это проще, чем проверять наличие класса и вызывать add/remove отдельно
     document.body.classList.toggle("dark-theme");
     
     const isDark = document.body.classList.contains("dark-theme");
     
     if (isDark) {
         themeIcon.textContent = "🌞";
-        themeText.textContent = "Включить светлую тему"; // 
+        themeText.textContent = "Включить светлую тему";
     } else {
         themeIcon.textContent = "🌙";
-        themeText.textContent = "Включить тёмную тему"; // 
+        themeText.textContent = "Включить тёмную тему";
     }
 });
 
@@ -368,21 +402,23 @@ toggleThemeBtn.addEventListener("click", () => {
 ===================================================== */
 highlightBtn.addEventListener("click", () => {
     // querySelectorAll — нахожу все карточки в контейнере
+    // Возвращает NodeList, который можно перебрать через forEach
     const allCards = container.querySelectorAll(".service-card");
     let devCardsFound = 0;
     
     // Переключаем состояние подсветки
-    isHighlightActive = !isHighlightActive;
+    isDevHighlightActive = !isDevHighlightActive;
     
-    if (isHighlightActive) {
+    if (isDevHighlightActive) {
         // Включаем подсветку
         allCards.forEach(card => {
             // Нахожу элемент категории внутри карточки
             const categoryEl = card.querySelector(".category-badge");
             if (categoryEl && categoryEl.textContent === "Разработка") {
-                // classList.add — добавляю класс category-highlight
-                // Использую add, потому что нужно добавить класс без удаления других
-                card.classList.add("category-highlight");
+                // classList.add — добавляю класс dev-highlight для категории "Разработка"
+                // Использую отдельный класс dev-highlight, чтобы не конфликтовать с .highlight (избранное)
+                // .highlight используется для избранного, .dev-highlight — для временной подсветки категории
+                card.classList.add("dev-highlight");
                 devCardsFound++;
             }
         });
@@ -399,8 +435,8 @@ highlightBtn.addEventListener("click", () => {
     } else {
         // Выключаем подсветку
         allCards.forEach(card => {
-            // classList.remove — удаляю класс category-highlight
-            card.classList.remove("category-highlight");
+            // classList.remove — удаляю класс dev-highlight
+            card.classList.remove("dev-highlight");
         });
         
         highlightMessage.textContent = "";
@@ -417,6 +453,7 @@ showAllBtn.addEventListener("click", () => {
     
     allCards.forEach(card => {
         // classList.remove — удаляю класс hidden для отображения всех карточек
+        // Это сбрасывает фильтр "Избранные" и показывает все карточки
         card.classList.remove("hidden");
     });
     
@@ -426,19 +463,22 @@ showAllBtn.addEventListener("click", () => {
 /* =====================================================
 ФИЛЬТР «ПОКАЗАТЬ ТОЛЬКО ИЗБРАННЫЕ»
 ===================================================== */
-showFavoritesBtn.addEventListener("click", () => {
+filterFavBtn.addEventListener("click", () => {
     const allCards = container.querySelectorAll(".service-card");
     
     allCards.forEach(card => {
-        // dataset.isFavorite — проверяю, добавлена ли карточка в избранное
-        const isFavorite = card.dataset.isFavorite === "true";
+        // ИСПРАВЛЕНИЕ: Проверяю наличие класса .highlight (избранное)
+        // classList.contains — проверяю наличие класса highlight
+        const isFavorite = card.classList.contains("highlight");
         
         if (!isFavorite) {
             // classList.add — добавляю класс hidden для скрытия карточки
             // Использую classList вместо style.display, потому что это разделяет логику и стили
+            // Все карточки БЕЗ класса .highlight получают display: none (через класс .hidden)
             card.classList.add("hidden");
         } else {
             // classList.remove — удаляю класс hidden для отображения карточки
+            // Карточки с классом .highlight остаются видимыми
             card.classList.remove("hidden");
         }
     });
@@ -451,6 +491,8 @@ demoBtn.addEventListener("click", () => {
     // DocumentFragment — создаю фрагмент документа для оптимизации
     // Использую DocumentFragment, потому что вставка происходит за ОДИН раз в DOM
     // Это уменьшает количество перерисовок страницы и улучшает производительность
+    // Без DocumentFragment каждая карточка вызывала бы перерисовку DOM (10 раз)
+    // С DocumentFragment перерисовка происходит только 1 раз после вставки всего фрагмента
     const fragment = document.createDocumentFragment();
     
     // Демо-данные (10 карточек)
@@ -476,11 +518,13 @@ demoBtn.addEventListener("click", () => {
         };
         
         // append — добавляю карточку во фрагмент (не в DOM напрямую)
+        // Это не вызывает перерисовку страницы, пока фрагмент не будет вставлен в DOM
         fragment.append(createCard(cardData, true));
         demoCardsCount++;
     }
     
     // append — добавляю весь фрагмент в контейнер за один раз
+    // Только здесь происходит одна перерисовка DOM для всех 10 карточек
     container.append(fragment);
     updateCounter();
 });
@@ -490,6 +534,7 @@ DEMO: ЗАГРУЗКА 100 ДЕМО-КАРТОЧЕК (DocumentFragment)
 ===================================================== */
 demo100Btn.addEventListener("click", () => {
     // DocumentFragment — создаю фрагмент документа для оптимизации
+    // Для 100 карточек это критически важно для производительности
     const fragment = document.createDocumentFragment();
     
     for (let i = 1; i <= 100; i++) {
@@ -513,6 +558,7 @@ demo100Btn.addEventListener("click", () => {
 ===================================================== */
 removeDemoBtn.addEventListener("click", () => {
     // confirm — требую подтверждение перед удалением демо-карточек
+    // Использую confirm, потому что это требование безопасности (защита от случайного удаления)
     const confirmDelete = confirm("Вы уверены, что хотите удалить все демо-карточки?");
     
     if (!confirmDelete) {
@@ -526,6 +572,8 @@ removeDemoBtn.addEventListener("click", () => {
         card.remove();
     });
     
+    // ИСПРАВЛЕНИЕ: Своевременное обнуление счётчика демо-карточек
+    // Это предотвращает "утечку памяти" — счётчик должен соответствовать реальному количеству
     demoCardsCount = 0;
     updateCounter();
 });
@@ -544,12 +592,16 @@ clearAllBtn.addEventListener("click", () => {
     
     // textContent = "" — очищаю контейнер безопасно
     // Использую textContent, потому что это удаляет все дочерние узлы без выполнения HTML
+    // Это быстрее, чем удалять каждую карточку отдельно через remove()
     container.textContent = "";
     
     // Очищаю массив данных
     cards.length = 0;
+    
+    // ИСПРАВЛЕНИЕ: Своевременное обнуление всех счётчиков и флагов
+    // Это предотвращает "утечку памяти" и несоответствие состояния приложения
     demoCardsCount = 0;
-    isHighlightActive = false;
+    isDevHighlightActive = false;
     highlightMessage.textContent = "";
     highlightStar.textContent = "⭐";
     
