@@ -14,7 +14,8 @@ body {
     padding: 20px;
     background: #f0f4f8;
     color: #1e293b;
-    transition: background 0.3s ease, color 0.3s ease;
+    /* Плавное переключение темы за 0.7 секунды */
+    transition: background 0.7s ease, color 0.7s ease;
 }
 
 /* ----- ТЁМНАЯ ТЕМА (добавляется через JS на body) ----- */
@@ -73,6 +74,8 @@ body.dark-theme .subtitle {
     margin-bottom: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    /* Плавный переход для темы */
+    transition: background 0.7s ease, box-shadow 0.7s ease;
 }
 
 .card h2 {
@@ -137,7 +140,8 @@ select {
 button {
     padding: 8px 16px;
     border: none;
-    background-color: #3b82f6;
+    /* Все кнопки синие #3D82F5 */
+    background-color: #3D82F5;
     color: #fff;
     border-radius: 6px;
     cursor: pointer;
@@ -150,19 +154,36 @@ button:hover {
 }
 
 button.btn-secondary {
-    background-color: #64748b;
+    background-color: #3D82F5;
 }
 
 button.btn-secondary:hover {
-    background-color: #475569;
+    background-color: #2563eb;
 }
 
+/* Кнопки удаления - красные #F34347 */
 button.btn-danger {
-    background-color: #ef4444;
+    background-color: #F34347;
 }
 
 button.btn-danger:hover {
     background-color: #dc2626;
+}
+
+/* ----- КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ С ИКОНКОЙ ----- */
+#toggle-theme {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#theme-icon {
+    font-size: 1.2rem;
+}
+
+/* ----- КНОПКА ПОДСВЕТКИ С ЗВЕЗДОЙ ----- */
+#highlight-star {
+    margin-right: 4px;
 }
 
 /* ----- СООБЩЕНИЕ ВАЛИДАЦИИ ----- */
@@ -173,9 +194,18 @@ button.btn-danger:hover {
     min-height: 1.2em;
 }
 
+/* ----- СООБЩЕНИЕ ДЛЯ ПОДСВЕТКИ КАТЕГОРИИ ----- */
+.highlight-msg {
+    margin: 8px 0 0;
+    font-size: 0.88rem;
+    color: #f59e0b;
+    min-height: 1.2em;
+    font-weight: bold;
+}
+
 /* ----- СЧЁТЧИК ----- */
 .counter-line {
-    margin: 0 0 14px;
+    margin: 14px 0 0;
     font-size: 0.9rem;
     color: #475569;
 }
@@ -198,13 +228,14 @@ body.dark-theme #total-count {
     margin: 0;
 }
 
-/* ----- КАРТОЧКИ УСЛУГ (создаются через JS) ----- */
+/* ----- КАТАЛОГ УСЛУГ (GRID) ----- */
 #services-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 14px;
 }
 
+/* ----- КАРТОЧКИ УСЛУГ (создаются через JS) ----- */
 .service-card {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -213,7 +244,7 @@ body.dark-theme #total-count {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    transition: box-shadow 0.2s, border-color 0.2s;
+    transition: box-shadow 0.2s, border-color 0.2s, background 0.7s ease;
 }
 
 .service-card:hover {
@@ -227,6 +258,14 @@ body.dark-theme #total-count {
     cursor: pointer;
 }
 
+.service-card h3:hover {
+    color: #3b82f6;
+}
+
+body.dark-theme .service-card h3 {
+    color: #e2e8f0;
+}
+
 .service-card .category-badge {
     display: inline-block;
     font-size: 0.75rem;
@@ -238,12 +277,22 @@ body.dark-theme #total-count {
     width: fit-content;
 }
 
+body.dark-theme .service-card .category-badge {
+    background: #1e40af;
+    color: #dbeafe;
+}
+
 .service-card p {
     margin: 0;
     font-size: 0.85rem;
     color: #64748b;
 }
 
+body.dark-theme .service-card p {
+    color: #94a3b8;
+}
+
+/* ----- КНОПКИ В КАРТОЧКЕ ----- */
 .service-card .card-actions {
     display: flex;
     gap: 8px;
@@ -256,6 +305,24 @@ body.dark-theme #total-count {
     font-size: 0.8rem;
 }
 
+/* Кнопка "В избранное" - синяя */
+.service-card .btn-favorite {
+    background-color: #3D82F5;
+}
+
+.service-card .btn-favorite:hover {
+    background-color: #2563eb;
+}
+
+/* Кнопка "Удалить" - красная */
+.service-card .btn-delete {
+    background-color: #F34347;
+}
+
+.service-card .btn-delete:hover {
+    background-color: #dc2626;
+}
+
 /* ----- ПОДСВЕТКА «ИЗБРАННОЕ» (добавляется через JS) ----- */
 /* ВАЖНО: Класс .highlight используется для избранных карточек */
 .service-card.highlight {
@@ -265,6 +332,18 @@ body.dark-theme #total-count {
 }
 
 body.dark-theme .service-card.highlight {
+    background: #2d2010;
+    border-color: #f59e0b;
+}
+
+/* ----- ПОДСВЕТКА КАТЕГОРИИ «РАЗРАБОТКА» ----- */
+.service-card.category-highlight {
+    border-color: #f59e0b;
+    background: #fffbeb;
+    box-shadow: 0 0 0 2px #fcd34d;
+}
+
+body.dark-theme .service-card.category-highlight {
     background: #2d2010;
     border-color: #f59e0b;
 }
@@ -306,21 +385,7 @@ body.dark-theme code {
 .hint {
     font-size: 0.88rem;
     color: #64748b;
-    margin: 0 0 12px;
-    line-height: 1.5;
-}
-
-/* ----- ЧЕК-ЛИСТ ----- */
-#checklist-section ol {
-    margin: 0;
-    padding-left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-#checklist-section li {
-    font-size: 0.9rem;
+    margin: 12px 0 0;
     line-height: 1.5;
 }
 

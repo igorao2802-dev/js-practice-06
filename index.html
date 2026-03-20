@@ -57,14 +57,23 @@
       <h2>Управление отображением</h2>
       
       <div class="buttons">
-        <button id="toggle-theme" class="btn-secondary">Переключить тему</button>
-        <button id="highlight-expensive" class="btn-secondary">Подсветить "Разработка"</button>
+        <!-- Кнопка переключения темы с иконкой -->
+        <button id="toggle-theme" class="btn-secondary">
+          <span id="theme-icon">🌙</span> <span id="theme-text">Тёмная</span>
+        </button>
+        <button id="highlight-expensive" class="btn-secondary">
+          <span id="highlight-star">⭐</span> Подсветить "Разработка"
+        </button>
+        <button id="show-all" class="btn-secondary">Показать все</button>
         <button id="filter-fav" class="btn-secondary">Показать только избранные</button>
       </div>
       
       <div class="counter-line">
         Количество карточек: <span id="total-count">0</span>
       </div>
+      
+      <!-- Сообщение для подсветки категории -->
+      <div id="highlight-message" class="highlight-msg"></div>
     </section>
 
     <!-- ============================ -->
@@ -81,28 +90,30 @@
     </section>
 
     <!-- ============================ -->
-    <!-- DEMO И МАССОВЫЕ ОПЕРАЦИИ -->
+    <!-- PRO: DEMO И МАССОВЫЕ ОПЕРАЦИИ -->
     <!-- ============================ -->
     <section class="card">
-      <h2>Demo и массовые операции</h2>
+      <h2>🔴 PRO — Демо-прайс (DocumentFragment)</h2>
       
       <div class="buttons">
-        <button id="load-demo" class="btn-primary">Загрузить демо (50 карточек)</button>
-        <button id="load-100" class="btn-primary">Заполнить демо (100 карточек)</button>
+        <button id="load-demo" class="btn-primary">Загрузить демо-прайс</button>
+        <button id="remove-demo" class="btn-danger">Удалить демо-карточки</button>
         <button id="clear-all" class="btn-danger">Удалить все карточки</button>
       </div>
+      
+      <p class="hint">Нажмите кнопку — в каталог добавятся 10 демо-карточек за один раз.</p>
     </section>
 
     <!-- ============================ -->
     <!-- ПОДСКАЗКИ -->
     <!-- ============================ -->
     <section class="card hints-section">
-      <h2>📋 Требования к выполнению</h2>
+      <h2> Требования к выполнению</h2>
       <ul>
         <li>Все обработчики событий — через <code>addEventListener</code> в <code>script.js</code></li>
         <li>Пользовательский текст вставляется только через <code>textContent</code> (защита от XSS)</li>
-        <li>Валидация: название не может быть короче 3 символов</li>
-        <li>При удалении всех карточек — подтверждение через <code>confirm()</code></li>
+        <li>Валидация: название не может быть короче 3 символов, описание не пустое</li>
+        <li>При удалении карточек — подтверждение через <code>confirm()</code></li>
         <li>Комментарии к каждому <code>createElement</code>, <code>append</code>, <code>remove</code>, <code>classList</code></li>
         <li>Использовать <code>querySelector</code> / <code>querySelectorAll</code> для поиска элементов</li>
       </ul>
