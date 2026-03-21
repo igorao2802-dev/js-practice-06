@@ -259,8 +259,8 @@ container.append(fragment); // 1 перерисовка
 ![Результат удаления одной карточки (обновлённый счётчик на следующем скриншоте)](screenshots/delete-card.png)
 ![Страница в тёмной теме](screenshots/dark-theme.png)
 ![Карточка с применённым классом .highlight](screenshots/highlight.png)
-![DevTools с изменённым DOM](screenshots/devtools-dom.png)
-![DocumentFragment в работе](screenshots/documentfragment.png)
+![DevTools до изменения DOM](screenshots/devtools-dom-befre-change.png)
+![DevTools с изменённым DOM (после загрузки демо-прайса)](screenshots/devtools-dom-after-change.png)
 -->
 
 ---
