@@ -2,7 +2,6 @@
 
 > Проект «Интерактивная витрина услуг» — закрепление тем: querySelector, textContent, classList, createElement, DocumentFragment.
 
-🔗 [Посмотреть демо](https://igorao2802-dev.github.io/js-practice-06/) _(опционально)_  
 📁 [Исходный код](https://github.com/igorao2802-dev/js-practice-06)
 
 ---
