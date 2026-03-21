@@ -254,14 +254,29 @@ container.append(fragment); // 1 перерисовка
 
 ## 📸 Скриншоты работы
 
-<!--
+#### Добавление 3-х разных карточек
+
 ![Добавление 3-х разных карточек](screenshots/add-cards.png)
+
+#### Результат удаления одной карточки (обновлённый счётчик на следующем скриншоте)
+
 ![Результат удаления одной карточки (обновлённый счётчик на следующем скриншоте)](screenshots/delete-card.png)
+
+#### Страница в тёмной теме
+
 ![Страница в тёмной теме](screenshots/dark-theme.png)
+
+#### Карточка с применённым классом .highlight
+
 ![Карточка с применённым классом .highlight](screenshots/highlight.png)
+
+#### DevTools до изменения DOM
+
 ![DevTools до изменения DOM](screenshots/devtools-dom-befre-change.png)
+
+#### DevTools с изменённым DOM (после загрузки демо-прайса)
+
 ![DevTools с изменённым DOM (после загрузки демо-прайса)](screenshots/devtools-dom-after-change.png)
--->
 
 ---
 
