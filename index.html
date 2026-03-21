@@ -1,153 +1,209 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Практическая работа №6 — Работа с DOM</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <!-- ============================ -->
-  <!-- ШАПКА -->
-  <!-- ============================ -->
-  <header>
-    <h1>Практическая работа №6</h1>
-    <p class="subtitle">Работа с DOM: поиск элементов, изменение контента и стилей, создание узлов</p>
-  </header>
-
-  <main>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Практическая работа №6 — Работа с DOM</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <!-- ============================ -->
-    <!-- СОЗДАНИЕ КАРТОЧКИ -->
+    <!-- ШАПКА -->
     <!-- ============================ -->
-    <section class="card">
-      <h2>Задание 1 — Добавить карточку услуги</h2>
-      
-      <div class="form-group">
-        <label for="title-input">Название услуги:</label>
-        <input type="text" id="title-input" placeholder="Введите название (мин. 3 символа)">
-      </div>
-      
-      <div class="form-group">
-        <label for="desc-input">Описание:</label>
-        <textarea id="desc-input" placeholder="Краткое описание услуги (необязательно)"></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label for="category-select">Категория:</label>
-        <select id="category-select">
-          <option value="Дизайн">Дизайн</option>
-          <option value="Разработка">Разработка</option>
-          <option value="Маркетинг">Маркетинг</option>
-        </select>
-      </div>
-      
-      <div class="buttons">
-        <button id="add-btn" class="btn-primary">Добавить</button>
-        <button id="clear-btn" class="btn-secondary">Очистить форму</button>
-      </div>
-      
-      <!-- Блок для вывода ошибок валидации -->
-      <div id="form-error" class="validation-msg"></div>
-    </section>
-
-    <!-- ============================ -->
-    <!-- УПРАВЛЕНИЕ ОТОБРАЖЕНИЕМ -->
-    <!-- ============================ -->
-    <section class="card">
-      <h2>Задание 2 — Управление стилями</h2>
-      
-      <div class="buttons">
-        <!-- Кнопка переключения темы с иконкой -->
-        <button id="toggle-theme" class="btn-primary">
-          <span id="theme-icon">🌙</span> <span id="theme-text">Включить тёмную тему</span>
-        </button>
-        <!-- Кнопка подсветки категории "Разработка" -->
-        <button id="highlight-expensive" class="btn-primary">
-          <span id="highlight-star">⭐</span> Подсветить «Разработку»
-        </button>
-        <button id="filter-fav" class="btn-secondary">Показать избранные</button>
-        <button id="show-all" class="btn-secondary">Показать все</button>
-      </div>
-    </section>
-
-    <!-- ============================ -->
-    <!-- КАТАЛОГ УСЛУГ -->
-    <!-- ============================ -->
-    <section class="card">
-      <h2>Каталог услуг</h2>
-      
-      <!-- Счётчик карточек (ID по ТЗ: #card-count) -->
-      <div class="counter-line">
-        Карточек в каталоге: <span id="card-count">0</span>
-      </div>
-      
-      <!-- Контейнер для карточек (ID по ТЗ: #card-container) -->
-      <div id="card-container"></div>
-      
-      <!-- Сообщение, если список пуст -->
-      <p id="empty-msg" class="empty-msg">Карточек пока нет. Добавьте первую!</p>
-    </section>
-
-    <!-- ============================ -->
-    <!-- PRO: DEMO И МАССОВЫЕ ОПЕРАЦИИ -->
-    <!-- ============================ -->
-    <section class="card">
-      <h2>🔴 PRO — Демо-прайс (DocumentFragment)</h2>
-      
-      <div class="buttons">
-        <button id="load-demo" class="btn-primary">Загрузить демо-прайс</button>
-        <button id="load-100" class="btn-secondary">Заполнить демо (100 карточек)</button>
-        <button id="remove-demo" class="btn-danger">Удалить демо-карточки</button>
-        <button id="clear-all" class="btn-danger">Удалить все карточки</button>
-      </div>
-      
-      <!-- Подсказка перемещена ПОСЛЕ кнопок с обновлённым текстом -->
-      <p class="hint">
-        <strong>Загрузить демо-прайс</strong> — добавит 10 готовых карточек услуг в каталог.<br>
-        <strong>Заполнить демо (100 карточек)</strong> — добавит 100 тестовых карточек для проверки производительности.<br>
-        <strong>Удалить демо-карточки</strong> — удалит только карточки, загруженные через демо-кнопки.<br>
-        <strong>Удалить все карточки</strong> — очистит весь каталог услуг полностью.
+    <header>
+      <h1>Практическая работа №6</h1>
+      <p class="subtitle">
+        Работа с DOM: поиск элементов, изменение контента и стилей, создание
+        узлов
       </p>
-    </section>
+    </header>
+
+    <main>
+      <!-- ============================ -->
+      <!-- СОЗДАНИЕ КАРТОЧКИ -->
+      <!-- ============================ -->
+      <section class="card">
+        <h2>Задание 1 — Добавить карточку услуги</h2>
+
+        <div class="form-group">
+          <label for="title-input">Название услуги:</label>
+          <input
+            type="text"
+            id="title-input"
+            placeholder="Введите название (мин. 3 символа)"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="desc-input">Описание:</label>
+          <textarea
+            id="desc-input"
+            placeholder="Краткое описание услуги (необязательно)"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="category-select">Категория:</label>
+          <select id="category-select">
+            <option value="Дизайн">Дизайн</option>
+            <option value="Разработка">Разработка</option>
+            <option value="Маркетинг">Маркетинг</option>
+          </select>
+        </div>
+
+        <div class="buttons">
+          <button id="add-btn" class="btn-primary">Добавить</button>
+          <button id="clear-btn" class="btn-secondary">Очистить форму</button>
+        </div>
+
+        <!-- Блок для вывода ошибок валидации -->
+        <div id="form-error" class="validation-msg"></div>
+      </section>
+
+      <!-- ============================ -->
+      <!-- УПРАВЛЕНИЕ ОТОБРАЖЕНИЕМ -->
+      <!-- ============================ -->
+      <section class="card">
+        <h2>Задание 2 — Управление стилями</h2>
+
+        <div class="buttons">
+          <!-- Кнопка переключения темы с иконкой -->
+          <button id="toggle-theme" class="btn-primary">
+            <span id="theme-icon">🌙</span>
+            <span id="theme-text">Включить тёмную тему</span>
+          </button>
+          <!-- Кнопка подсветки категории "Разработка" -->
+          <button id="highlight-expensive" class="btn-primary">
+            <span id="highlight-star">⭐</span> Подсветить «Разработку»
+          </button>
+          <button id="filter-fav" class="btn-secondary">
+            Показать избранные
+          </button>
+          <button id="show-all" class="btn-secondary">Показать все</button>
+        </div>
+      </section>
+
+      <!-- ============================ -->
+      <!-- КАТАЛОГ УСЛУГ -->
+      <!-- ============================ -->
+      <section class="card">
+        <h2>Каталог услуг</h2>
+
+        <!-- Счётчик карточек (ID по ТЗ: #card-count) -->
+        <div class="counter-line">
+          Карточек в каталоге: <span id="card-count">0</span>
+        </div>
+
+        <!-- Контейнер для карточек (ID по ТЗ: #card-container) -->
+        <div id="card-container"></div>
+
+        <!-- Сообщение, если список пуст -->
+        <p id="empty-msg" class="empty-msg">
+          Карточек пока нет. Добавьте первую!
+        </p>
+      </section>
+
+      <!-- ============================ -->
+      <!-- PRO: DEMO И МАССОВЫЕ ОПЕРАЦИИ -->
+      <!-- ============================ -->
+      <section class="card">
+        <h2>🔴 PRO — Демо-прайс (DocumentFragment)</h2>
+
+        <div class="buttons">
+          <button id="load-demo" class="btn-primary">
+            Загрузить демо-прайс
+          </button>
+          <button id="load-100" class="btn-secondary">
+            Заполнить демо (100 карточек)
+          </button>
+          <button id="remove-demo" class="btn-danger">
+            Удалить демо-карточки
+          </button>
+          <button id="clear-all" class="btn-danger">
+            Удалить все карточки
+          </button>
+        </div>
+
+        <!-- Подсказка перемещена ПОСЛЕ кнопок с обновлённым текстом -->
+        <p class="hint">
+          <strong>Загрузить демо-прайс</strong> — добавит 10 готовых карточек
+          услуг в каталог.<br />
+          <strong>Заполнить демо (100 карточек)</strong> — добавит 100 тестовых
+          карточек для проверки производительности.<br />
+          <strong>Удалить демо-карточки</strong> — удалит только карточки,
+          загруженные через демо-кнопки.<br />
+          <strong>Удалить все карточки</strong> — очистит весь каталог услуг
+          полностью.
+        </p>
+      </section>
+
+      <!-- ============================ -->
+      <!-- ПОДСКАЗКИ -->
+      <!-- ============================ -->
+      <section class="card hints-section">
+        <h2>📘 Подсказки</h2>
+        <ul>
+          <li>
+            <strong>querySelector / querySelectorAll</strong> — основной способ
+            поиска элементов. <code>querySelector</code> возвращает первый
+            найденный, <code>querySelectorAll</code> — NodeList всех.
+          </li>
+          <li>
+            <strong>textContent vs innerHTML</strong> — для пользовательских
+            данных всегда используйте <code>textContent</code>.
+            <code>innerHTML</code> допустим только для статичного, заранее
+            известного HTML.
+          </li>
+          <li>
+            <strong>createElement + append</strong> — создавайте узлы через JS,
+            не через строки HTML.
+          </li>
+          <li>
+            <strong>classList.toggle / add / remove</strong> — управляйте
+            внешним видом через классы, а не через прямое изменение
+            <code>style</code>.
+          </li>
+          <li>
+            <strong>element.remove()</strong> — удаляет элемент из DOM напрямую,
+            без ссылки на родителя.
+          </li>
+        </ul>
+      </section>
+
+      <!-- ============================ -->
+      <!-- ЧЕК-ЛИСТ СДАЧИ -->
+      <!-- ============================ -->
+      <section class="card checklist-section">
+        <h2>✅ Чек-лист сдачи</h2>
+        <ol>
+          <li>Проект запускается через Live Server, в консоли нет ошибок.</li>
+          <li>
+            Репозиторий <code>js-practice-06</code> создан и загружен на GitHub.
+          </li>
+          <li>Папка <code>screenshots/</code> содержит минимум 4 скриншота.</li>
+          <li>
+            Возле каждого ключевого метода DOM есть комментарий «ПОЧЕМУ?».
+          </li>
+          <li>
+            README.md заполнен: описание проекта + ответы на 5 вопросов для
+            интервью.
+          </li>
+          <li>
+            Нигде нет <code>innerHTML</code> для вставки пользовательских
+            данных.
+          </li>
+        </ol>
+      </section>
+    </main>
 
     <!-- ============================ -->
-    <!-- ПОДСКАЗКИ -->
+    <!-- ПОДВАЛ -->
     <!-- ============================ -->
-    <section class="card hints-section">
-      <h2>📘 Подсказки</h2>
-      <ul>
-        <li><strong>querySelector / querySelectorAll</strong> — основной способ поиска элементов. <code>querySelector</code> возвращает первый найденный, <code>querySelectorAll</code> — NodeList всех.</li>
-        <li><strong>textContent vs innerHTML</strong> — для пользовательских данных всегда используйте <code>textContent</code>. <code>innerHTML</code> допустим только для статичного, заранее известного HTML.</li>
-        <li><strong>createElement + append</strong> — создавайте узлы через JS, не через строки HTML.</li>
-        <li><strong>classList.toggle / add / remove</strong> — управляйте внешним видом через классы, а не через прямое изменение <code>style</code>.</li>
-        <li><strong>element.remove()</strong> — удаляет элемент из DOM напрямую, без ссылки на родителя.</li>
-      </ul>
-    </section>
+    <footer>
+      <p>js-practice-06 · Группа 2509: Осадчий И.А. · 2026</p>
+    </footer>
 
-    <!-- ============================ -->
-    <!-- ЧЕК-ЛИСТ СДАЧИ -->
-    <!-- ============================ -->
-    <section class="card checklist-section">
-      <h2>✅ Чек-лист сдачи</h2>
-      <ol>
-        <li>Проект запускается через Live Server, в консоли нет ошибок.</li>
-        <li>Репозиторий <code>js-practice-06</code> создан и загружен на GitHub.</li>
-        <li>Папка <code>screenshots/</code> содержит минимум 4 скриншота.</li>
-        <li>Возле каждого ключевого метода DOM есть комментарий «ПОЧЕМУ?».</li>
-        <li>README.md заполнен: описание проекта + ответы на 5 вопросов для интервью.</li>
-        <li>Нигде нет <code>innerHTML</code> для вставки пользовательских данных.</li>
-      </ol>
-    </section>
-  </main>
-
-  <!-- ============================ -->
-  <!-- ПОДВАЛ -->
-  <!-- ============================ -->
-  <footer>
-    <p>js-practice-06 · Группа 2509 · 2026</p>
-  </footer>
-
-  <!-- Подключение скрипта -->
-  <script src="script.js"></script>
-</body>
+    <!-- Подключение скрипта -->
+    <script src="script.js"></script>
+  </body>
 </html>
